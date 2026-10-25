@@ -1,5 +1,18 @@
 {
-  "numeric_columns": ["Age", "CityTier", "DurationOfPitch", "NumberOfPersonVisiting", "NumberOfFollowups", "PreferredPropertyStar", "NumberOfTrips", "Passport", "PitchSatisfactionScore", "OwnCar", "NumberOfChildrenVisiting", "MonthlyIncome"],
+  "numeric_columns": [
+    "Age",
+    "CityTier",
+    "DurationOfPitch",
+    "NumberOfPersonVisiting",
+    "NumberOfFollowups",
+    "PreferredPropertyStar",
+    "NumberOfTrips",
+    "Passport",
+    "PitchSatisfactionScore",
+    "OwnCar",
+    "NumberOfChildrenVisiting",
+    "MonthlyIncome"
+  ],
   "numeric_fill_values": {
     "Age": 36.0,
     "CityTier": 1.0,
@@ -14,7 +27,14 @@
     "NumberOfChildrenVisiting": 1.0,
     "MonthlyIncome": 22403.0
   },
-  "categorical_columns": ["TypeofContact", "Occupation", "Gender", "ProductPitched", "MaritalStatus", "Designation"],
+  "categorical_columns": [
+    "TypeofContact",
+    "Occupation",
+    "Gender",
+    "ProductPitched",
+    "MaritalStatus",
+    "Designation"
+  ],
   "categorical_fill_values": {
     "TypeofContact": "Self Enquiry",
     "Occupation": "Salaried",
@@ -24,22 +44,69 @@
     "Designation": "Executive"
   },
   "categories": {
-    "TypeofContact": ["Company Invited", "Self Enquiry"],
-    "Occupation": ["Free Lancer", "Large Business", "Salaried", "Small Business"],
-    "Gender": ["Female", "Male"],
-    "ProductPitched": ["Basic", "Deluxe", "King", "Standard", "Super Deluxe"],
-    "MaritalStatus": ["Divorced", "Married", "Single", "Unmarried"],
-    "Designation": ["AVP", "Executive", "Manager", "Senior Manager", "VP"]
+    "TypeofContact": [
+      "Company Invited",
+      "Self Enquiry"
+    ],
+    "Occupation": [
+      "Free Lancer",
+      "Large Business",
+      "Salaried",
+      "Small Business"
+    ],
+    "Gender": [
+      "Female",
+      "Male"
+    ],
+    "ProductPitched": [
+      "Basic",
+      "Deluxe",
+      "King",
+      "Standard",
+      "Super Deluxe"
+    ],
+    "MaritalStatus": [
+      "Divorced",
+      "Married",
+      "Single",
+      "Unmarried"
+    ],
+    "Designation": [
+      "AVP",
+      "Executive",
+      "Manager",
+      "Senior Manager",
+      "VP"
+    ]
   },
   "feature_names_out": [
-    "num__Age", "num__CityTier", "num__DurationOfPitch", "num__NumberOfPersonVisiting",
-    "num__NumberOfFollowups", "num__PreferredPropertyStar", "num__NumberOfTrips", "num__Passport",
-    "num__PitchSatisfactionScore", "num__OwnCar", "num__NumberOfChildrenVisiting", "num__MonthlyIncome",
+    "num__Age",
+    "num__CityTier",
+    "num__DurationOfPitch",
+    "num__NumberOfPersonVisiting",
+    "num__NumberOfFollowups",
+    "num__PreferredPropertyStar",
+    "num__NumberOfTrips",
+    "num__Passport",
+    "num__PitchSatisfactionScore",
+    "num__OwnCar",
+    "num__NumberOfChildrenVisiting",
+    "num__MonthlyIncome",
     "cat__TypeofContact_Self Enquiry",
-    "cat__Occupation_Large Business", "cat__Occupation_Salaried", "cat__Occupation_Small Business",
+    "cat__Occupation_Large Business",
+    "cat__Occupation_Salaried",
+    "cat__Occupation_Small Business",
     "cat__Gender_Male",
-    "cat__ProductPitched_Deluxe", "cat__ProductPitched_King", "cat__ProductPitched_Standard", "cat__ProductPitched_Super Deluxe",
-    "cat__MaritalStatus_Married", "cat__MaritalStatus_Single", "cat__MaritalStatus_Unmarried",
-    "cat__Designation_Executive", "cat__Designation_Manager", "cat__Designation_Senior Manager", "cat__Designation_VP"
+    "cat__ProductPitched_Deluxe",
+    "cat__ProductPitched_King",
+    "cat__ProductPitched_Standard",
+    "cat__ProductPitched_Super Deluxe",
+    "cat__MaritalStatus_Married",
+    "cat__MaritalStatus_Single",
+    "cat__MaritalStatus_Unmarried",
+    "cat__Designation_Executive",
+    "cat__Designation_Manager",
+    "cat__Designation_Senior Manager",
+    "cat__Designation_VP"
   ]
 }
