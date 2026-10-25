@@ -1,23 +1,45 @@
 """Streamlit app for Tourism Package Purchase Prediction."""
 import streamlit as st
 import pandas as pd
+import numpy as np
+import xgboost as xgb
 import os
-import pickle
-
-try:
-    import joblib
-except ModuleNotFoundError:
-    joblib = None
+import json
 
 st.set_page_config(page_title="Tourism Package Predictor", page_icon="✈️", layout="centered")
 
-# Load the trained model
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "tourism_model.joblib")
-if joblib is not None:
-    model = joblib.load(MODEL_PATH)
-else:
-    with open(MODEL_PATH, "rb") as f:
-        model = pickle.load(f)
+BASE_DIR = os.path.dirname(__file__)
+
+# Load preprocessing config and XGBoost model (no pickle/sklearn needed)
+with open(os.path.join(BASE_DIR, "preprocessing_config.json")) as f:
+    PREPROCESS_CONFIG = json.load(f)
+
+MODEL = xgb.XGBClassifier()
+MODEL.load_model(os.path.join(BASE_DIR, "xgboost_model.json"))
+
+NUM_COLS = PREPROCESS_CONFIG["numeric_columns"]
+NUM_FILL = PREPROCESS_CONFIG["numeric_fill_values"]
+CAT_COLS = PREPROCESS_CONFIG["categorical_columns"]
+CAT_FILL = PREPROCESS_CONFIG["categorical_fill_values"]
+CAT_CATEGORIES = PREPROCESS_CONFIG["categories"]
+FEATURE_ORDER = PREPROCESS_CONFIG["feature_names_out"]
+
+
+def preprocess(df):
+    """Replicate the sklearn ColumnTransformer preprocessing in pure pandas."""
+    result = pd.DataFrame()
+    # Numeric: fill missing with median, keep as-is
+    for col in NUM_COLS:
+        result[f"num__{col}"] = df[col].fillna(NUM_FILL[col])
+    # Categorical: fill missing with mode, then one-hot encode (drop='first')
+    for col in CAT_COLS:
+        filled = df[col].fillna(CAT_FILL[col])
+        categories = CAT_CATEGORIES[col]
+        # drop='first' means skip the first category
+        for cat in categories[1:]:
+            result[f"cat__{col}_{cat}"] = (filled == cat).astype(float)
+    return result[FEATURE_ORDER].values.astype(np.float32)
+
 
 st.title("✈️ Tourism Package Purchase Predictor")
 st.write("Predict whether a customer will purchase the Wellness Tourism Package.")
@@ -54,7 +76,6 @@ with col3:
 with col4:
     product_pitched = st.selectbox("Product Pitched", ["Basic", "Standard", "Deluxe", "Super Deluxe", "King"])
 
-# Build the input dataframe
 input_data = pd.DataFrame([{
     "Age": age,
     "TypeofContact": type_of_contact,
@@ -63,22 +84,23 @@ input_data = pd.DataFrame([{
     "Occupation": occupation,
     "Gender": gender,
     "NumberOfPersonVisiting": num_persons,
-    "NumberOfFollowups": num_followups,
+    "NumberOfFollowups": float(num_followups),
     "ProductPitched": product_pitched,
-    "PreferredPropertyStar": preferred_star,
+    "PreferredPropertyStar": float(preferred_star),
     "MaritalStatus": marital_status,
-    "NumberOfTrips": num_trips,
+    "NumberOfTrips": float(num_trips),
     "Passport": passport,
     "PitchSatisfactionScore": pitch_score,
     "OwnCar": own_car,
-    "NumberOfChildrenVisiting": num_children,
+    "NumberOfChildrenVisiting": float(num_children),
     "Designation": designation,
     "MonthlyIncome": monthly_income,
 }])
 
 if st.button("Predict", type="primary"):
-    prediction = model.predict(input_data)[0]
-    proba = model.predict_proba(input_data)[0]
+    features = preprocess(input_data)
+    prediction = MODEL.predict(features)[0]
+    proba = MODEL.predict_proba(features)[0]
     if prediction == 1:
         st.success(f"The customer is **likely to purchase** the package. (Confidence: {proba[1]:.1%})")
     else:
