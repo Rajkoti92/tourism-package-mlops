@@ -1,14 +1,23 @@
 """Streamlit app for Tourism Package Purchase Prediction."""
 import streamlit as st
 import pandas as pd
-import joblib
 import os
+import pickle
+
+try:
+    import joblib
+except ModuleNotFoundError:
+    joblib = None
 
 st.set_page_config(page_title="Tourism Package Predictor", page_icon="✈️", layout="centered")
 
 # Load the trained model
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "tourism_model.joblib")
-model = joblib.load(MODEL_PATH)
+if joblib is not None:
+    model = joblib.load(MODEL_PATH)
+else:
+    with open(MODEL_PATH, "rb") as f:
+        model = pickle.load(f)
 
 st.title("✈️ Tourism Package Purchase Predictor")
 st.write("Predict whether a customer will purchase the Wellness Tourism Package.")
