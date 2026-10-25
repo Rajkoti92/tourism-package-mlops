@@ -10,11 +10,11 @@ st.set_page_config(page_title="Tourism Package Predictor", page_icon="✈️", l
 
 BASE_DIR = os.path.dirname(__file__)
 
-# Load preprocessing config and XGBoost model (no pickle/sklearn needed)
+# Load preprocessing config and XGBoost model using pure Booster (no sklearn needed)
 with open(os.path.join(BASE_DIR, "preprocessing_config.json")) as f:
     PREPROCESS_CONFIG = json.load(f)
 
-MODEL = xgb.XGBClassifier()
+MODEL = xgb.Booster()
 MODEL.load_model(os.path.join(BASE_DIR, "xgboost_model.json"))
 
 NUM_COLS = PREPROCESS_CONFIG["numeric_columns"]
@@ -99,9 +99,10 @@ input_data = pd.DataFrame([{
 
 if st.button("Predict", type="primary"):
     features = preprocess(input_data)
-    prediction = MODEL.predict(features)[0]
-    proba = MODEL.predict_proba(features)[0]
+    dmatrix = xgb.DMatrix(features, feature_names=FEATURE_ORDER)
+    prob_positive = MODEL.predict(dmatrix)[0]
+    prediction = int(prob_positive > 0.5)
     if prediction == 1:
-        st.success(f"The customer is **likely to purchase** the package. (Confidence: {proba[1]:.1%})")
+        st.success(f"The customer is **likely to purchase** the package. (Confidence: {prob_positive:.1%})")
     else:
-        st.info(f"The customer is **unlikely to purchase** the package. (Confidence: {proba[0]:.1%})")
+        st.info(f"The customer is **unlikely to purchase** the package. (Confidence: {1 - prob_positive:.1%})")
